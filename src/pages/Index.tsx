@@ -28,11 +28,13 @@ interface Order {
   date: string;
 }
 
+const generateRandomPrice = () => Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
 const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 1,
     name: "Celestial Dreams",
-    price: 2500,
+    price: generateRandomPrice(),
     detail: "An ethereal abstract piece exploring the cosmos through vibrant purples and golds. This masterpiece captures the infinite beauty of space.",
     image: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800&h=600&fit=crop",
     artist: "Luna Martinez"
@@ -40,7 +42,7 @@ const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 2,
     name: "Urban Symphony",
-    price: 1800,
+    price: generateRandomPrice(),
     detail: "A contemporary cityscape that blends architectural precision with artistic expression. The interplay of light and shadow creates a mesmerizing rhythm.",
     image: "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=800&h=600&fit=crop",
     artist: "Marcus Chen"
@@ -48,7 +50,7 @@ const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 3,
     name: "Ocean Reverie",
-    price: 3200,
+    price: generateRandomPrice(),
     detail: "Fluid acrylic waves in deep teals and aquamarines that seem to move before your eyes. A tribute to the ocean's eternal dance.",
     image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&h=600&fit=crop",
     artist: "Sofia Ramirez"
@@ -56,7 +58,7 @@ const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 4,
     name: "Golden Hour",
-    price: 2100,
+    price: generateRandomPrice(),
     detail: "Warm amber and gold tones capture that magical moment when day transitions to night. A celebration of light and transformation.",
     image: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&h=600&fit=crop",
     artist: "David Park"
@@ -64,7 +66,7 @@ const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 5,
     name: "Violet Cascade",
-    price: 2800,
+    price: generateRandomPrice(),
     detail: "Layers of rich purples and violets create a waterfall of color. This piece invites deep contemplation and inner peace.",
     image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop",
     artist: "Isabella Torres"
@@ -72,7 +74,7 @@ const MOCK_ART_ITEMS: ArtItem[] = [
   {
     id: 6,
     name: "Crimson Passion",
-    price: 2400,
+    price: generateRandomPrice(),
     detail: "Bold strokes of red and orange that pulse with energy and emotion. A powerful statement piece for any collection.",
     image: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&h=600&fit=crop",
     artist: "Rafael Santos"
@@ -93,6 +95,8 @@ type BuyerPage = "home" | "detail" | "cart" | "orders" | "auction";
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<"buyer" | "seller" | "">("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [currentPage, setCurrentPage] = useState<BuyerPage>("home");
   const [selectedItem, setSelectedItem] = useState<ArtItem | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -113,18 +117,25 @@ const Index = () => {
     artist: ""
   });
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!userRole) {
       toast.error("Please select a role");
       return;
     }
+    if (!email || !password) {
+      toast.error("Please enter email and password");
+      return;
+    }
     setIsLoggedIn(true);
-    toast.success(`Welcome to ArtVault!`);
+    toast.success(`Welcome to ArtVault, ${email}!`);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserRole("");
+    setEmail("");
+    setPassword("");
     setCurrentPage("home");
     toast.success("Logged out successfully");
   };
@@ -228,24 +239,51 @@ const Index = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="role">Select Your Role</Label>
-              <Select value={userRole} onValueChange={(value: "buyer" | "seller") => setUserRole(value)}>
-                <SelectTrigger id="role">
-                  <SelectValue placeholder="Choose role..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="buyer">Buyer</SelectItem>
-                  <SelectItem value="seller">Seller</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button 
-              onClick={handleLogin} 
-              className="w-full bg-primary hover:bg-primary/90"
-            >
-              Enter ArtVault
-            </Button>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="role">Select Your Role</Label>
+                <Select value={userRole} onValueChange={(value: "buyer" | "seller") => setUserRole(value)}>
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Choose role..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="buyer">Buyer</SelectItem>
+                    <SelectItem value="seller">Seller</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Button 
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                Login
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>

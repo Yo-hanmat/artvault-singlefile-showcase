@@ -220,7 +220,7 @@ const Index = () => {
       <div className="min-h-screen flex items-center justify-center gradient-hero animate-fade-in">
         <Card className="w-full max-w-md shadow-2xl">
           <CardHeader className="space-y-2 text-center">
-            <CardTitle className="text-4xl font-bold gradient-primary bg-clip-text text-transparent">
+            <CardTitle className="text-5xl font-bold font-poppins gradient-primary bg-clip-text text-transparent">
               ArtVault
             </CardTitle>
             <CardDescription className="text-base">
@@ -258,7 +258,7 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card shadow-sm">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold font-poppins gradient-primary bg-clip-text text-transparent">
               ArtVault - Seller
             </h1>
             <Button onClick={handleLogout} variant="outline" size="sm">
@@ -700,7 +700,7 @@ const Index = () => {
       <header className="border-b bg-card shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold font-poppins gradient-primary bg-clip-text text-transparent">
               ArtVault
             </h1>
             <Button onClick={handleLogout} variant="outline" size="sm">

@@ -14,7 +14,187 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      users: {
+        Row: {
+          id: string
+          email: string
+          display_name: string | null
+          avatar_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          display_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          display_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      auctions: {
+        Row: {
+          id: string
+          seller_id: string
+          title: string
+          description: string | null
+          starting_price: number
+          current_price: number
+          currency: string
+          starts_at: string
+          ends_at: string
+          status: 'active' | 'ended' | 'cancelled'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          seller_id: string
+          title: string
+          description?: string | null
+          starting_price: number
+          current_price?: number
+          currency?: string
+          starts_at?: string
+          ends_at: string
+          status?: 'active' | 'ended' | 'cancelled'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          seller_id?: string
+          title?: string
+          description?: string | null
+          starting_price?: number
+          current_price?: number
+          currency?: string
+          starts_at?: string
+          ends_at?: string
+          status?: 'active' | 'ended' | 'cancelled'
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'auctions_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      sells: {
+        Row: {
+          id: string
+          seller_id: string
+          title: string
+          description: string | null
+          price: number
+          currency: string
+          stock: number
+          status: 'active' | 'sold_out' | 'archived'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          seller_id: string
+          title: string
+          description?: string | null
+          price: number
+          currency?: string
+          stock?: number
+          status?: 'active' | 'sold_out' | 'archived'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          seller_id?: string
+          title?: string
+          description?: string | null
+          price?: number
+          currency?: string
+          stock?: number
+          status?: 'active' | 'sold_out' | 'archived'
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'sells_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      orders: {
+        Row: {
+          id: string
+          buyer_id: string
+          seller_id: string
+          source_type: 'sell' | 'auction'
+          source_id: string
+          quantity: number
+          amount: number
+          currency: string
+          status: 'created' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'refunded'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          buyer_id: string
+          seller_id: string
+          source_type: 'sell' | 'auction'
+          source_id: string
+          quantity?: number
+          amount: number
+          currency?: string
+          status?: 'created' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'refunded'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          buyer_id?: string
+          seller_id?: string
+          source_type?: 'sell' | 'auction'
+          source_id?: string
+          quantity?: number
+          amount?: number
+          currency?: string
+          status?: 'created' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'refunded'
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'orders_buyer_id_fkey'
+            columns: ['buyer_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'orders_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

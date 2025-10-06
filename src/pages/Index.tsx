@@ -11,6 +11,125 @@ import { toast } from "sonner";
 
 // Add this import at the top with other imports:
 import { supabase } from "@/integrations/supabase/client";
+// yo-hanmat/artvault-singlefile-showcase/artvault-singlefile-showcase-25c229fee41dbba650891a9dea6f091e48ba0195/src/pages/Index.tsx
+
+// Replace the existing handleLogin function:
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userRole) {
+      toast.error("Please select a role");
+      return;
+    }
+    if (!email || !password) {
+      toast.error("Please enter email and password");
+      return;
+    }
+
+    try {
+      let { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      // If sign-in fails (e.g., user not found), attempt to sign up
+      if (error && error.message.includes("Invalid login credentials")) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+        });
+
+        if (signUpError) throw signUpError;
+        data = signUpData;
+
+        // On successful sign-up, attempt to create an entry in the custom 'user_login' table
+        const { error: insertUserError } = await supabase
+            .from('user_login')
+            .insert({
+                email: email,
+                username: email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_'), // Simple unique username
+                password_hash: 'mocked_by_auth', 
+            });
+        
+        if (insertUserError && insertUserError.code !== '23505') {
+            console.error("Error adding user to custom table:", insertUserError);
+        }
+      } else if (error) {
+        throw error;
+      }
+      
+      if (data.session) {
+        setIsLoggedIn(true);
+        toast.success(`Welcome to ArtVault, ${email}! Database tables updated/checked.`);
+      } else {
+         toast.error("Login failed. Check email for confirmation link if you just signed up.");
+      }
+
+    } catch (error) {
+      toast.error(`Authentication failed: ${error.message}`);
+    }
+  };
+// yo-hanmat/artvault-singlefile-showcase/artvault-singlefile-showcase-25c229fee41dbba650891a9dea6f091e48ba0195/src/pages/Index.tsx
+
+// Replace the existing handleLogout function:
+  const handleLogout = () => {
+    supabase.auth.signOut(); // Added Supabase sign out
+    setIsLoggedIn(false);
+    setUserRole("");
+    setEmail("");
+    setPassword("");
+    setCurrentPage("home");
+    toast.success("Logged out successfully");
+  };
+// yo-hanmat/artvault-singlefile-showcase/artvault-singlefile-showcase-25c229fee41dbba650891a9dea6f091e48ba0195/src/pages/Index.tsx
+
+// Replace the existing handleAddArt function:
+  const handleAddArt = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newArt.name || !newArt.price || !newArt.detail || !newArt.artist) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
+    const priceValue = parseFloat(newArt.price);
+    
+    // Data to insert into the 'artwork' table
+    const newArtwork = {
+        seller_id: MOCK_SELLER_ID, // Use mock ID (replace with actual logic)
+        title: newArt.name,
+        description: newArt.detail,
+        price: priceValue,
+        image_url: newArt.image || "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
+        stock_quantity: 1, 
+        is_available: true,
+    };
+    
+    // Perform Supabase insert operation
+    const { data: insertedData, error } = await supabase
+        .from('artwork')
+        .insert(newArtwork)
+        .select()
+        .single();
+    
+    if (error) {
+        console.error("Supabase insert error:", error);
+        toast.error(`Failed to add art piece to database: ${error.message}`);
+        return;
+    }
+
+    // Update local state with data returned from the database
+    const artItem: ArtItem = {
+      id: artItems.length + 1,
+      name: insertedData.title,
+      price: insertedData.price,
+      detail: insertedData.description,
+      image: insertedData.image_url,
+      artist: newArt.artist
+    };
+    
+    setArtItems([...artItems, artItem]);
+    setNewArt({ name: "", price: "", detail: "", image: "", artist: "" });
+    toast.success("Art piece added successfully and synchronized with the database!");
+  };
 
 // Inside the Index component, define a mock seller ID for inserts:
 const Index = () => {

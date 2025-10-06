@@ -7,6 +7,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+// yo-hanmat/artvault-singlefile-showcase/artvault-singlefile-showcase-25c229fee41dbba650891a9dea6f091e48ba0195/src/pages/Index.tsx
+
+// Add this import at the top with other imports:
+import { supabase } from "@/integrations/supabase/client";
+
+// Inside the Index component, define a mock seller ID for inserts:
+const Index = () => {
+  // ... existing state definitions ...
+  
+  // Mock Seller ID for demonstration (replace with actual logic in a real app)
+  const MOCK_SELLER_ID = "6a4a6b4c-9f0a-4a6c-9f0a-6b4c9f0a6b4c";
+
+  // ... (rest of the component logic) ...
 
 interface ArtItem {
   id: number;
